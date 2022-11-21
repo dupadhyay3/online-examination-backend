@@ -1,63 +1,34 @@
 import express from "express";
 const app = express();
-import mongoose from "mongoose";
-const PORT = 4000;
+import "./Db/connection.js";
+import "./Route/routes.js"
+import userRoutes from "./Route/routes.js";
+const PORT = 5000;
+import "./Controllers/controller.js";
 
-import {candidate, quation}from "./Modal/modal.js";
+import cors from "cors";
 
-const URI=`mongodb+srv://Akash:kcJPhQ9ZGmvkeLMB@cluster0.kxo9afi.mongodb.net/test`
-mongoose
-  .connect(URI)
-  .then(() => {
-    console.log("mongodb connected");
-  })
-  .catch((err) => {
-    console.log(err);
-  });
- 
-
-  app.use(express.json())
+// creating middleware
+import bodyParser from "body-parser";
 
 
-app.post("/candidate", (req, res) => {
-    var myData = new candidate(req.body);
- myData.save()
- .then(item => {
- res.send("item saved to database");
- })
- .catch(err => {
- res.status(400).send("unable to save to database");
- });
-});
+app.use(bodyParser.json()); // for parsing application/json/
+app.use(bodyParser.urlencoded({ extended: true }));
 
-app.get('/candidate/data',(req,res)=>{
-    candidate.find(function(err, data) {
-        if(err){
-            console.log(err);
-        }
-        else{
-            res.send(data);
-            console.log(data);
-        }
-    });  
-   
-   
-})
+app.use(express.json());
+app.use("/users", userRoutes);
 
-app.post('/candidate/:id',(req, res)=>{
-    const data = candidate.findByIdAndUpdate(req.body.id, 
-        {Name:req.body.Name}, function(err, data) {
-            if(err){
-                console.log(err);
-            }
-            else{
-                res.send(data);
-                console.log("Data updated!");
-            }
-        });  
-})
+
+// app.use(
+//   cors({
+//     origin: "*",
+//   })
+// );
+
+// import "./Services/mail.js"; // sending mail
 
 
 app.listen(PORT, () => {
-  console.log(`listening to the port number ${PORT}`);
+  // res.send("HEllo");
+  console.log(`listening to the port number ${PORT} `);
 });
