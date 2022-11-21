@@ -8,7 +8,8 @@ dotenv.config();
 
 // mongodb atlas connection
 const password = process.env.MONGODB_PASSWORD;
-const uri = `mongodb+srv://Akash:${password}@cluster0.kxo9afi.mongodb.net/test`;
+const user=process.env.MONGOD_USER
+const uri = `mongodb+srv://${user}:${password}@cluster0.kxo9afi.mongodb.net/test`;
 mongoose
   .connect(uri)
   .then(() => {

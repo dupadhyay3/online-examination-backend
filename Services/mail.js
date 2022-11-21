@@ -9,9 +9,9 @@ let mailTransporter = createTransport({
     secure:false,
     requireTLS:true,
 	auth: {
-		user: 'Aakashsumanpurple3012@gmail.com',
+		user: process.env.GMAIL_ID,
 		pass: process.env.GMAIL_PASSWORD
-	}
+	} 
 });
 
 let mailDetails = {
