@@ -2,7 +2,7 @@ import express from "express";
 const userRoutes = express.Router();
 // const app = express();
 
-import {createCandidate,getCandidateData,updateCandidateInfo,deleteCandidateInfo,createQuestion,getQuestionInfo,updateQuestion,deleteQuestion} from "../Controllers/controller.js"
+import {sendresult,createCandidate,getCandidateData,updateCandidateInfo,deleteCandidateInfo,createQuestion,getQuestionInfo,updateQuestion,deleteQuestion} from "../Controllers/controller.js"
 
 // userRoutes.get("/dev", (req, res) => {
 //     console.log("============")
@@ -36,6 +36,8 @@ userRoutes.put("/question/update",updateQuestion)
 
 // deleting data in question table
 userRoutes.delete("/question/delete",deleteQuestion)
+
+userRoutes.get("/result/send",sendresult )
 
 export default userRoutes;
 

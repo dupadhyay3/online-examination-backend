@@ -1,32 +1,28 @@
 import express from "express";
 const app = express();
-import "./Db/connection.js";
-import "./Route/routes.js"
+import "./Db/connection.js"; //connection with monggodb atlas
 import userRoutes from "./Route/routes.js";
-const PORT = 5000;
-import "./Controllers/controller.js";
-
+import bodyParser from "body-parser";
+import { sendEmail } from "./Services/mail.js";
 import cors from "cors";
+const PORT = 5000;
+
 
 // creating middleware
-import bodyParser from "body-parser";
-
-
 app.use(bodyParser.json()); // for parsing application/json/
 app.use(bodyParser.urlencoded({ extended: true }));
-
 app.use(express.json());
 app.use("/users", userRoutes);
 
 
-// app.use(
-//   cors({
-//     origin: "*",
-//   })
-// );
+app.use(
+  cors({
+    origin: "*",
+  })
+);
 
-// import "./Services/mail.js"; // sending mail
-
+// sending mail
+sendEmail('Aakashsumanpurple3012@gmail.com','Aakashsumanpurple306@gmail.com','Test mail',"email functanailty added")
 
 app.listen(PORT, () => {
   // res.send("HEllo");

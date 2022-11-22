@@ -14,24 +14,26 @@ export const CandidateSchema = new mongoose.Schema({
   currentAddress: String,
 });
 
+
 // creating schema for question
 export const QuestionSchema = new mongoose.Schema({
   question: String,
   options: Array,
   optionType: String,
-  ans: String ,
+  ans: String || Array,
 });
 
-// candidateResult {
-//     candidate: Relation with candidateTable,
-//     quations: Relationwith Quations Table,
-//     candidateAns,
-//     result: enum[pass, fail],
-// }
+export const candidateResult = new mongoose.Schema({
+    candidate: Number,
+    quations: Number,
+    candidateAns:String,
+    results: String,
+});
 
 //exporting schema, will get in entery file which is index.js
 
 // creating model for candiate and quation
 const candidate = mongoose.model("candidate", CandidateSchema);
 const question = mongoose.model("question", QuestionSchema);
-export { candidate, question };
+const result = mongoose.model("result", candidateResult);
+export { candidate, question, result };
