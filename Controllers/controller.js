@@ -4,27 +4,47 @@ const app = express();
 import { candidate, question, result } from "../Modal/modals.js";
 
 /**
- * 
+ *
  * @param {*} req.body  it will take inputs from frontend
- * 
+ *
  */
+
+
 export const createCandidate = async (req, res) => {
-  var myData = new candidate(req.body);
-  console.log(myData);
-  await myData
-    .save()
-    .then(() => {
-      res.send("new candidate added to database");
+  // const myData =  new candidate(req.body);
+      candidate.find({ email: req.body.email })
+        .then((ans) => {
+            console.log(ans);
+            console.log(ans.length);
+            if(ans.length==0){
+              myData.save().then(() => {
+      res.send("new question added to database");
     })
-    .catch(() => {
-      res.status(400).send("unable to save to database");
+    .catch((err) => {
+      console.log("error", err);
+      // res.send("unable to save to database", err);
     });
+    
+            }else{
+              res.send("user already exist")
+            }
+        }).catch((err) => {
+          console.log('user already exist');
+          console.log(err.Message);
+      })
+      
+    
+    
+
 };
 
+ 
+
+
 /**
- * 
- * @param {*} req 
- * @param {*} res 
+ *
+ * @param {*} req
+ * @param {*} res
  */
 export const getCandidateData = (req, res) => {
   candidate.find(function (err, data) {
@@ -32,12 +52,15 @@ export const getCandidateData = (req, res) => {
       console.log(err);
     } else {
       res.send(data);
-      console.log(data);
+      // data.map(email){return data.email}
+      console.log(data.length, "idddddddddddddddddddddd");
+      data.forEach((element) => {
+        console.log(element.email);
+      });
     }
   });
   // .catch( (err)=> {err});
 };
-
 
 /**
  * 
@@ -55,7 +78,6 @@ export const updateCandidateInfo = (req, res) => {
     }
   });
 };
-
 /**
  deleating documets where name is Akash
  */
@@ -69,8 +91,7 @@ export const deleteCandidateInfo = (req, res) =>
     }
   });
 
-  
-  /**
+/**
    * 
 creating question 
 data will be recived from frontend
@@ -139,22 +160,24 @@ export const deleteQuestion = (req, res) => {
 };
 
 export const sendresult = async (req, res) => {
-  var user = candidate.findOne( { firstName: "Lucky" })
+  var user = candidate.findOne({ firstName: "Lucky" });
   console.log(user[0].email);
-  const candidates =  candidate.find({ firstName: "Lucky" },function (err, data) {
-    if (err) {
-      console.log(err);
-    } else {
-      res.send(data);
-      console.log(data);
+  const candidates = candidate.find(
+    { firstName: "Lucky" },
+    function (err, data) {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send(data);
+        console.log(data);
+      }
     }
-  });
-  
+  );
+
   // const questions = question.find({
   //   question: "what is capital of rajasthan",
   // });
   // console.log(candidates);
-
 
   // console.log(question._id);
 

@@ -22,7 +22,7 @@ app.use(
 );
 
 // sending mail
-sendEmail('Aakashsumanpurple3012@gmail.com','Aakashsumanpurple306@gmail.com','Test mail',"email functanailty added")
+// sendEmail('Aakashsumanpurple3012@gmail.com','Aakashsumanpurple306@gmail.com','Test mail',"email functanailty added")
 
 app.listen(PORT, () => {
   // res.send("HEllo");
