@@ -2,13 +2,10 @@ import express from "express";
 const userRoutes = express.Router();
 // const app = express();
 
-import {sendresult,createCandidate,getCandidateData,updateCandidateInfo,deleteCandidateInfo,createQuestion,getQuestionInfo,updateQuestion,deleteQuestion} from "../Controllers/controller.js"
+import {adminRegisteration,adminPasswordReset, createCollege,sendresult,createCandidate,getCandidateData,updateCandidateInfo,deleteCandidateInfo,createQuestion,getQuestionInfo,updateQuestion,deleteQuestion} from "../Controllers/controller.js"
 
-// userRoutes.get("/dev", (req, res) => {
-//     console.log("============")
-//  res.status(201).send("gg");
-// })
-
+userRoutes.post("/admin/create",adminRegisteration );
+userRoutes.put("/admin/reset",adminPasswordReset );
 // creating candidate in database
 userRoutes.post("/candidate/create",createCandidate );
 
@@ -38,6 +35,12 @@ userRoutes.put("/question/update",updateQuestion)
 userRoutes.delete("/question/delete",deleteQuestion)
 
 userRoutes.get("/result/send",sendresult )
+
+
+
+
+// creating candidate in database
+userRoutes.post("/college/create",createCollege );
 
 export default userRoutes;
 

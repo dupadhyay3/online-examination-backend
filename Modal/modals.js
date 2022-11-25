@@ -12,6 +12,9 @@ export const CandidateSchema = new mongoose.Schema({
   areaOfIntrest: String,
   futureGoal: String,
   currentAddress: String,
+  collegeName: String,
+  batch:String,
+  collegeId:Object,
 });
 
 
@@ -23,17 +26,29 @@ export const QuestionSchema = new mongoose.Schema({
   ans: String || Array,
 });
 
-export const candidateResult = new mongoose.Schema({
+export const candidateResultSchema = new mongoose.Schema({
     candidate: Number,
     quations: Number,
     candidateAns:String,
     results: String,
 });
 
+export const collegeSchema = new mongoose.Schema({
+  collegeName: String
+});
+
+
+export const adminSchema = new mongoose.Schema({
+  name: { type: String, required: true, trim: true },
+  email: { type: String, required: true, trim: true },
+  password: { type: String, required: true, trim: true },
+});
 //exporting schema, will get in entery file which is index.js
 
 // creating model for candiate and quation
 const candidate = mongoose.model("candidate", CandidateSchema);
 const question = mongoose.model("question", QuestionSchema);
-const result = mongoose.model("result", candidateResult);
-export { candidate, question, result };
+const result = mongoose.model("result", candidateResultSchema);
+const college = mongoose.model("college", collegeSchema);
+const admin = mongoose.model("admin", adminSchema);
+export { candidate, question, result, college,admin};

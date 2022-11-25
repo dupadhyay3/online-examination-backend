@@ -1,7 +1,87 @@
 import express from "express";
 const app = express();
+import bcrypt from 'bcrypt'
+import jwt from 'jsonwebtoken';
+import { candidate, question, result, college, admin } from "../Modal/modals.js";
 
-import { candidate, question, result } from "../Modal/modals.js";
+
+
+
+export const adminRegisteration = async (req, res) => {
+    const { name, email, password, password_confirmation} = req.body
+    const user = await admin.findOne({ email: email })
+    if (user) {
+      res.send({ "status": "failed", "message": "Email already exists" })
+    } else {
+      if (name && email && password && password_confirmation) {
+        if (password === password_confirmation) {
+          try {
+            const salt = await bcrypt.genSalt(10)
+            const hashPassword = await bcrypt.hash(password, salt)
+            const docu = new admin({
+              name: name,
+              email: email,
+              password: hashPassword,
+            })
+            await docu.save()
+            const saved_user = await admin.findOne({ email: email })
+            // Generate JWT Token
+            const token = jwt.sign({ userID: saved_user._id }, process.env.JWT_SECRET_KEY, { expiresIn: 15*1})
+            res.status(201).send({ "status": "success", "message": "Registration Success", "token": token })
+          } catch (error) {
+            console.log(error)
+            res.send({ "status": "failed", "message": "Unable to Register" })
+          }
+        } else {
+          res.send({ "status": "failed", "message": "Password and Confirm Password doesn't match" })
+        }
+      } else {
+        res.send({ "status": "failed", "message": "All fields are required" })
+      }
+    }
+  }
+
+  // export const adminPasswordReset = async (req, res) => {
+  //   const { password, password_confirmation } = req.body
+  //   console.log(req.body, "bodyyyyyyy");
+  //   const { id,token } = req.query
+  //   console.log(req.query.token,"param ==");
+  //   const user = await admin.findById({_id:id})
+  //   console.log(user);
+  //   const new_secret = user._id + process.env.JWT_SECRET_KEY
+  //   try {
+  //     jwt.verify(token, new_secret)
+  //     if (password && password_confirmation) {
+  //       if (password !== password_confirmation) {
+  //         res.send({ "status": "failed", "message": "New Password and Confirm New Password doesn't match" })
+  //       } else {
+  //         const salt = await bcrypt.genSalt(10)
+  //         const newHashPassword = await bcrypt.hash(password, salt)
+  //         await admin.findByIdAndUpdate(user._id, { $set: { password: newHashPassword } })
+  //         res.send({ "status": "success", "message": "Password Reset Successfully" })
+  //       }
+  //     } else {
+  //       res.send({ "status": "failed", "message": "All Fields are Required" })
+  //     }
+  //   } catch (error) {
+  //     console.log(error)
+  //     res.send({ "status": "failed", "message": "Invalid Token" })
+  //   }
+  // }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /**
  *
@@ -9,38 +89,62 @@ import { candidate, question, result } from "../Modal/modals.js";
  *
  */
 
-
 export const createCandidate = async (req, res) => {
-  // const myData =  new candidate(req.body);
-      candidate.find({ email: req.body.email })
-        .then((ans) => {
-            console.log(ans);
-            console.log(ans.length);
-            if(ans.length==0){
-              myData.save().then(() => {
-      res.send("new question added to database");
-    })
-    .catch((err) => {
-      console.log("error", err);
-      // res.send("unable to save to database", err);
-    });
-    
-            }else{
-              res.send("user already exist")
-            }
-        }).catch((err) => {
-          console.log('user already exist');
-          console.log(err.Message);
-      })
-      
-    
-    
+  const {
+    firstName,
+    middleName,
+    lastName,
+    email,
+    dob,
+    mobileNo,
+    educationDetails,
+    areaOfIntrest,
+    futureGoal,
+    currentAddress,
+    collegeName} = req.body;
+  const user = await candidate.findOne({ email: email });
+  console.log(user);
+  if (user) {
+    res.send({ status: "failed", message: "Email already exists" });
+  } else {
+    const collegeData= await college.findOne({ collegeName: collegeName })
+    let collegeId=collegeData._id
+    const d = new Date();
+    let batch = d.getFullYear();
+        // console.log(collegeData._id,"collegeData");
+    if (firstName && middleName && lastName && email && dob && mobileNo && educationDetails && areaOfIntrest && futureGoal && currentAddress && collegeName && batch && collegeId) {
+      try {
+        console.log("insideeeeeeeeeee")
 
+        const doc = new candidate({
+          firstName:firstName,
+          middleName:middleName,
+          lastName:lastName,
+          email:email,
+          dob:dob,
+          mobileNo:mobileNo,
+          educationDetails:educationDetails,
+          areaOfIntrest:areaOfIntrest,
+          futureGoal:futureGoal,
+          currentAddress:currentAddress,
+          collegeName:collegeName,
+          batch:batch,
+          collegeId:collegeId,
+        });
+        await doc.save();
+        res.status(201).send({
+          status: "success",
+          message: "Registration Success",
+        });
+      } catch (error) {
+        console.log(error);
+        res.send({ status: "failed", message: "Unable to Register" });
+      }
+    } else {
+      res.send({ status: "failed", message: "All fields are required" });
+    }
+  }
 };
-
- 
-
-
 /**
  *
  * @param {*} req
@@ -67,8 +171,26 @@ export const getCandidateData = (req, res) => {
  changing firstName and currentAddress if firstName is "Lucky"
  */
 export const updateCandidateInfo = (req, res) => {
-  var myquery = { firstName: "Lucky" };
-  var newvalues = { $set: { firstName: "Akash", currentAddress: "Jaipur" } };
+      const {firstName,
+      middleName,
+      lastName,
+      email,
+      dob,
+      mobileNo,
+      educationDetails,
+      areaOfIntrest,
+      futureGoal,
+      currentAddress}=req.body
+  var myquery = { email: email };
+  var newvalues = { $set: { firstName: firstName, middleName:middleName,
+  lastName:lastName,
+  email:email,
+  dob:dob,
+  mobileNo:mobileNo,
+  educationDetails:educationDetails,
+  areaOfIntrest:areaOfIntrest,
+  futureGoal:futureGoal,
+  currentAddress:currentAddress} };
   const data = candidate.updateOne(myquery, newvalues, function (err, data) {
     if (err) {
       console.log(err);
@@ -81,15 +203,18 @@ export const updateCandidateInfo = (req, res) => {
 /**
  deleating documets where name is Akash
  */
-export const deleteCandidateInfo = (req, res) =>
-  candidate.deleteOne({ firstName: "Akash" }, function (err, data) {
+export const deleteCandidateInfo = (req, res) =>{
+  const {email}=req.body.email
+  candidate.deleteOne({ email: email }, function (err, data) {
     if (err) {
-      console.log(err, "user doesn't exist");
+     res.send(err,"user doesn't exist")
     } else {
       res.send("one document deleted");
-      console.log("one document deleted");
+      
     }
   });
+}
+  
 
 /**
    * 
@@ -157,6 +282,33 @@ export const deleteQuestion = (req, res) => {
       console.log("one document deleted", data);
     }
   });
+};
+
+export const createCollege = async (req, res) => {
+  const collegeData = new college(req.body);
+
+  college
+    .find({ collegeName: req.body.collegeName })
+    .then((ans) => {
+      console.log(ans);
+      console.log(ans.length);
+      if (ans.length == 0) {
+        collegeData
+          .save()
+          .then(() => {
+            res.send("new college added to database");
+          })
+          .catch((err) => {
+            console.log("error", err);
+            res.send("unable to save to database", err);
+          });
+      } else {
+        res.send("college already exist");
+      }
+    })
+    .catch((err) => {
+      console.log(err.Message);
+    });
 };
 
 export const sendresult = async (req, res) => {
