@@ -2,10 +2,26 @@ import express from "express";
 const userRoutes = express.Router();
 // const app = express();
 
-import {adminRegisteration,adminPasswordReset, createCollege,sendresult,createCandidate,getCandidateData,updateCandidateInfo,deleteCandidateInfo,createQuestion,getQuestionInfo,updateQuestion,deleteQuestion} from "../Controllers/controller.js"
+import {adminRegisteration,adminLogin,changeAdminPassword,loggedAdmin,sendAdminPasswordResetEmail,AdminPasswordReset, createCollege,sendresult,createCandidate,getCandidateData,updateCandidateInfo,deleteCandidateInfo,createQuestion,getQuestionInfo,updateQuestion,deleteQuestion} from "../Controllers/controller.js"
+import checkAdminAuth from "../Middleware/auth-middleware.js"
 
+//route level middleware
+userRoutes.use('/loggedAdmin', checkAdminAuth)
+userRoutes.use('/admin/change', checkAdminAuth)
+
+// Admin panel
 userRoutes.post("/admin/create",adminRegisteration );
-userRoutes.put("/admin/reset",adminPasswordReset );
+userRoutes.post("/admin/login",adminLogin );
+userRoutes.post('/send-reset-password-email', sendAdminPasswordResetEmail)
+userRoutes.post('/reset-password/:id/:token', AdminPasswordReset)
+
+//proctected routes
+userRoutes.post("/admin/change",changeAdminPassword );
+userRoutes.get("/loggedAdmin",loggedAdmin)
+
+
+
+
 // creating candidate in database
 userRoutes.post("/candidate/create",createCandidate );
 

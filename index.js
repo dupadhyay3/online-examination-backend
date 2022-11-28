@@ -1,6 +1,6 @@
 import express from "express";
 const app = express();
-import "./Db/connection.js"; //connection with monggodb atlas
+import "./Config/dbConnection.js"; //connection with monggodb atlas
 import userRoutes from "./Route/routes.js";
 import bodyParser from "body-parser";
 import { sendEmail } from "./Services/mail.js";
@@ -20,6 +20,7 @@ app.use(
     origin: "*",
   })
 );
+
 
 // sending mail
 // sendEmail('Aakashsumanpurple3012@gmail.com','Aakashsumanpurple306@gmail.com','Test mail',"email functanailty added")

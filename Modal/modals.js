@@ -22,7 +22,11 @@ export const CandidateSchema = new mongoose.Schema({
 export const QuestionSchema = new mongoose.Schema({
   question: String,
   options: Array,
-  optionType: String,
+  optionType: {
+    type: String,
+    enum : ['Single','Multiple'],
+    default: 'Single'
+  },
   ans: String || Array,
 });
 
@@ -47,8 +51,8 @@ export const adminSchema = new mongoose.Schema({
 
 // creating model for candiate and quation
 const candidate = mongoose.model("candidate", CandidateSchema);
-const question = mongoose.model("question", QuestionSchema);
+const questions = mongoose.model("question", QuestionSchema);
 const result = mongoose.model("result", candidateResultSchema);
 const college = mongoose.model("college", collegeSchema);
 const admin = mongoose.model("admin", adminSchema);
-export { candidate, question, result, college,admin};
+export { candidate, questions, result, college,admin};
