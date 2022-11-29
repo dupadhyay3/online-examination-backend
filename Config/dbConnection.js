@@ -7,9 +7,8 @@ import dotenv from "dotenv";
 dotenv.config();
 
 // mongodb atlas connection
-const password = process.env.MONGODB_PASSWORD;
-const user=process.env.MONGOD_USER
-const uri = `mongodb+srv://${user}:${password}@cluster0.kxo9afi.mongodb.net/test`;
+
+const uri = process.env.URI
 mongoose
   .connect(uri)
   .then(() => {

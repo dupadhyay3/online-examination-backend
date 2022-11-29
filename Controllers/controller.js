@@ -9,8 +9,10 @@ import {
   college,
   admin,
 } from "../Modal/modals.js";
-
+import dotenv from "dotenv";
+dotenv.config();
 import transporter from '../Config/emailconfig.js'
+
 
 export const adminRegisteration = async (req, res) => {
   const { name, email, password, password_confirmation } = req.body;
@@ -114,7 +116,7 @@ export const sendAdminPasswordResetEmail = async (req, res) => {
     if (user) {
       const secret = user._id + process.env.JWT_SECRET_KEY
       const token = jwt.sign({ userID: user._id }, secret, { expiresIn: '15m' })
-      const link = `http://127.0.0.1:5000/users/reset-password/${user._id}/${token}`
+      const link = `${process.env.SERVER}/users/reset-password/${user._id}/${token}`
       console.log(link)
       // // Send Email
       let info = await transporter.sendMail({
@@ -178,6 +180,7 @@ export const createCandidate = async (req, res) => {
     futureGoal,
     currentAddress,
     collegeName,
+    experience
   } = req.body;
   const user = await candidate.findOne({ email: email });
   console.log(user);
@@ -186,8 +189,8 @@ export const createCandidate = async (req, res) => {
   } else {
     const collegeData = await college.findOne({ collegeName: collegeName });
     let collegeId = collegeData._id;
-    const d = new Date();
-    let batch = d.getFullYear();
+    const ThisYear = new Date();
+    let batch = ThisYear.getFullYear();
     // console.log(collegeData._id,"collegeData");
     if (
       firstName &&
@@ -201,6 +204,7 @@ export const createCandidate = async (req, res) => {
       futureGoal &&
       currentAddress &&
       collegeName &&
+      experience &&
       batch &&
       collegeId
     ) {
@@ -219,10 +223,18 @@ export const createCandidate = async (req, res) => {
           futureGoal: futureGoal,
           currentAddress: currentAddress,
           collegeName: collegeName,
+          experience:experience,
           batch: batch,
           collegeId: collegeId,
         });
         await doc.save();
+        let info = await transporter.sendMail({
+          from: process.env.EMAIL_FROM,
+          to: process.env.EMAIL_FROM,
+          subject: "candidate register",
+          html: `<h1>new candidate registered <h1/>`
+        })
+        
         res.status(201).send({
           status: "success",
           message: "Registration Success",
@@ -241,20 +253,15 @@ export const createCandidate = async (req, res) => {
  * @param {*} req
  * @param {*} res
  */
+
 export const getCandidateData = (req, res) => {
   candidate.find(function (err, data) {
     if (err) {
       console.log(err);
     } else {
       res.send(data);
-      // data.map(email){return data.email}
-      console.log(data.length, "idddddddddddddddddddddd");
-      data.forEach((element) => {
-        console.log(element.email);
-      });
     }
   });
-  // .catch( (err)=> {err});
 };
 
 /**
@@ -316,7 +323,7 @@ export const updateCandidateInfo = async(req, res) => {
 };
 
 /**
- deleating documets where name is Akash
+ deleating documets based on email
  */
 export const deleteCandidateInfo = async(req, res) => {
   const { email } = req.body
@@ -376,21 +383,7 @@ export const createQuestion = async (req, res) => {
   }
 };
 
-// export const createQuestion = async (req, res) => {
 
-//   var myData = new question(req.body);
-//   console.log(myData);
-
-//   await myData
-//     .save()
-//     .then(() => {
-//       res.send("new question added to database");
-//     })
-//     .catch((err) => {
-//       console.log("error", err);
-//       // res.send("unable to save to database", err);
-//     });
-// };
 
 /**
  * 
@@ -412,16 +405,17 @@ export const getQuestionInfo = (req, res) => {
  updating question if ans is Ahemdabad
  */
 export const updateQuestion = (req, res) => {
-  let myquery = { ans: "Ahemdabad" };
+  let myquery = { ans: "Jaipur" };
   let newvalues = {
-    $set: { question: "what is capital of rajasthan", ans: "Jaipur" },
+    $set: { question: "what is capital of gujrat", ans: "Ahemdabad" },
   };
-  const data = questions.updateOne(myquery, newvalues, function (err, data) {
+  const updateddata = questions.updateOne(myquery, newvalues, function (err, data) {
     if (err) {
+      res.send(Error)
       console.log(err);
     } else {
       res.send("one documet updated");
-      console.log("Data updated!", data);
+      console.log("Data updated!", updateddata);
     }
   });
 };
@@ -430,6 +424,7 @@ export const updateQuestion = (req, res) => {
  * 
 deleting question if ans is "Ahemdabad"
  */
+
 export const deleteQuestion = (req, res) => {
   questions.deleteOne({ ans: "Ahemdabad" }, function (err, data) {
     if (err) {
@@ -441,14 +436,15 @@ export const deleteQuestion = (req, res) => {
   });
 };
 
+
+
+
 export const createCollege = async (req, res) => {
   const collegeData = new college(req.body);
 
   college
     .find({ collegeName: req.body.collegeName })
     .then((ans) => {
-      console.log(ans);
-      console.log(ans.length);
       if (ans.length == 0) {
         collegeData
           .save()
@@ -456,7 +452,7 @@ export const createCollege = async (req, res) => {
             res.send("new college added to database");
           })
           .catch((err) => {
-            console.log("error", err);
+           
             res.send("unable to save to database", err);
           });
       } else {
@@ -480,7 +476,7 @@ export const getCollegeData = (req, res) => {
       res.status(201).send(clgName)
     }
   });
-};
+}; 
 
 export const sendresult = async (req, res) => {
   var user = candidate.findOne({ firstName: "Lucky" });
@@ -496,37 +492,4 @@ export const sendresult = async (req, res) => {
       }
     }
   );
-
-  // const questions = question.find({
-  //   question: "what is capital of rajasthan",
-  // });
-  // console.log(candidates);
-
-  // console.log(question._id);
-
-  // const candidateResult = function answer(ans) {
-  //   if (candidate.ans == question.ans) {
-  //     return "pass";
-  //   } else {
-  //     return "fail";
-  //   }
-  // };
-  // answer(candidate.ans);
-
-  // let result = {
-  //   candidateId: candidate._id,
-  //   quationId: question._id,
-  //   candidateAns: candidate.ans,
-  //   results: candidateResult,
-  // };
-  // console.log(result);
-  // await result
-  //   .save()
-  //   .then(() => {
-  //     res.send("new question added to database");
-  //   })
-  //   .catch((err) => {
-  //     console.log("error", err);
-  //     // res.send("unable to save to database", err);
-  //   });
 };
