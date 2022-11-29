@@ -468,6 +468,20 @@ export const createCollege = async (req, res) => {
     });
 };
 
+export const getCollegeData = (req, res) => {
+  college.find(function (err, data) {
+    if (err) {
+      console.log(err);
+    } else {
+     let clgName=[]
+      for(let i=0; i<data.length; i++){
+        clgName[i]=data[i].collegeName
+      }
+      res.status(201).send(clgName)
+    }
+  });
+};
+
 export const sendresult = async (req, res) => {
   var user = candidate.findOne({ firstName: "Lucky" });
   console.log(user[0].email);

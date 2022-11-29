@@ -6,7 +6,11 @@ import bodyParser from "body-parser";
 import { sendEmail } from "./Services/mail.js";
 import cors from "cors";
 const PORT = 5000;
-
+app.use(
+  cors({
+    origin: "*",
+  })
+);
 
 // creating middleware
 app.use(bodyParser.json()); // for parsing application/json/
@@ -15,11 +19,7 @@ app.use(express.json());
 app.use("/users", userRoutes);
 
 
-app.use(
-  cors({
-    origin: "*",
-  })
-);
+
 
 
 // sending mail
