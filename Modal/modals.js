@@ -70,7 +70,8 @@ export const candidateResultSchema = new mongoose.Schema({
 });
 
 export const collegeSchema = new mongoose.Schema({
-  collegeName: String
+  collegeName: String,
+  show:Boolean
 });
 
 

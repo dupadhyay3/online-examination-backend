@@ -437,43 +437,79 @@ export const deleteQuestion = (req, res) => {
 };
 
 
-
-
 export const createCollege = async (req, res) => {
-  const collegeData = new college(req.body);
-
-  college
-    .find({ collegeName: req.body.collegeName })
-    .then((ans) => {
-      if (ans.length == 0) {
-        collegeData
-          .save()
-          .then(() => {
-            res.send("new college added to database");
-          })
-          .catch((err) => {
-           
-            res.send("unable to save to database", err);
+  const {collegeName,show} = req.body;
+  const user = await college.findOne({ collegeName: collegeName });
+  if (user) {
+    res.send({ status: "failed", message: "College already exists" });
+  } else {
+    if (collegeName && show ) {
+     
+        try {
+         
+          const collegeData = new college({
+            collegeName: collegeName,
+            show: show,
           });
-      } else {
-        res.send("college already exist");
-      }
-    })
-    .catch((err) => {
-      console.log(err.Message);
-    });
+          await collegeData.save();
+          res
+            .status(201)
+            .send({
+              status: "success",
+              message: "College Added Successfully",
+            });
+        } catch (error) {
+          console.log(error);
+          res.send({ status: "failed", message: "Unable to Add college" });
+        }
+    } else {
+      res.send({ status: "failed", message: "All fields are required" });
+    }
+  }
 };
+
+// export const createCollege = async (req, res) => {
+//   const {collegeName,show} = req.body;
+//   college
+//     .find({ collegeName:collegeName })
+//     .then((ans) => {
+//       if (ans.length == 0) {
+//         let collegeData=new college({
+//           collegeName:collegeName,
+//           show:show
+//         })
+//         console.log(collegeData);
+//         collegeData
+//           .save()
+//           .then(() => {
+//             res.send("new college added to database");
+//           })
+//           .catch((err) => {
+           
+//             res.send("unable to save to database", err);
+//           });
+//       } else {
+//         res.send("college already exist");
+//       }
+//     })
+//     .catch((err) => {
+//       console.log(err,"errr");
+//     });
+// };
 
 export const getCollegeData = (req, res) => {
   college.find(function (err, data) {
     if (err) {
       console.log(err);
     } else {
-     let clgName=[]
-      for(let i=0; i<data.length; i++){
-        clgName[i]=data[i].collegeName
-      }
-      res.status(201).send(clgName)
+      console.log(Object.entries(data));
+      let info=Object.entries(data)
+      console.log(data);
+    //  let clgName=[]
+    //   for(let i=0; i<data.length; i++){
+    //     clgName[i]=data[i].collegeName
+    //   }
+      res.status(201).send(data)
     }
   });
 }; 
