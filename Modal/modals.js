@@ -53,7 +53,17 @@ export const CandidateSchema = new mongoose.Schema({
 // creating schema for question
 export const QuestionSchema = new mongoose.Schema({
   question: String,
-  options: Array,
+  options: [{
+      title: {
+          type: String,
+          required: true
+      },
+      value: {
+          type: Boolean,
+          required: true,
+          default: false
+      }
+  }],
   optionType: {
     type: String,
     enum : ['Single','Multiple'],
@@ -61,6 +71,7 @@ export const QuestionSchema = new mongoose.Schema({
   },
   ans: String || Array,
 });
+
 
 export const candidateResultSchema = new mongoose.Schema({
     candidate: Number,

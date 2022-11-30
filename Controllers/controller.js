@@ -502,9 +502,6 @@ export const getCollegeData = (req, res) => {
     if (err) {
       console.log(err);
     } else {
-      console.log(Object.entries(data));
-      let info=Object.entries(data)
-      console.log(data);
     //  let clgName=[]
     //   for(let i=0; i<data.length; i++){
     //     clgName[i]=data[i].collegeName
