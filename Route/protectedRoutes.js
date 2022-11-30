@@ -53,6 +53,6 @@ ManagementRoutes.get("/result/send",sendresult )
 
 // creating college in database
 ManagementRoutes.post("/college/create",createCollege );
-ManagementRoutes.get("/college/get",getCollegeData );
+
 export default ManagementRoutes;
 
