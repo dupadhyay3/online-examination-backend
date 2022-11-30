@@ -18,7 +18,7 @@ export const adminRegisteration = async (req, res) => {
   const { name, email, password, password_confirmation } = req.body;
   const user = await admin.findOne({ email: email });
   if (user) {
-    res.send({ status: "failed", message: "Email already exists" });
+    res.status(404).send({ status: "failed", message: "Email already exists" });
   } else {
     if (name && email && password && password_confirmation) {
       if (password === password_confirmation) {
@@ -185,7 +185,7 @@ export const createCandidate = async (req, res) => {
   const user = await candidate.findOne({ email: email });
   console.log(user);
   if (user) {
-    res.send({ status: "failed", message: "Email already exists" });
+    res.status(404).send({ status: "failed", message: "Email already exists" });
   } else {
     const collegeData = await college.findOne({ collegeName: collegeName });
     let collegeId = collegeData._id;
