@@ -11,8 +11,7 @@ import {
 } from "../Modal/modals.js";
 import dotenv from "dotenv";
 dotenv.config();
-import transporter from '../Config/emailconfig.js'
-
+import transporter from "../Config/emailconfig.js";
 
 export const adminRegisteration = async (req, res) => {
   const { name, email, password, password_confirmation } = req.body;
@@ -36,15 +35,13 @@ export const adminRegisteration = async (req, res) => {
           const token = jwt.sign(
             { userID: saved_user._id },
             process.env.JWT_SECRET_KEY,
-            { expiresIn: '1d' }
+            { expiresIn: "1d" }
           );
-          res
-            .status(201)
-            .send({
-              status: "success",
-              message: "Registration Success",
-              token: token,
-            });
+          res.status(201).send({
+            status: "success",
+            message: "Registration Success",
+            token: token,
+          });
         } catch (error) {
           console.log(error);
           res.send({ status: "failed", message: "Unable to Register" });
@@ -63,103 +60,132 @@ export const adminRegisteration = async (req, res) => {
 
 export const adminLogin = async (req, res) => {
   try {
-    const { email, password } = req.body
+    const { email, password } = req.body;
+    console.log(req.body);
     if (email && password) {
-      const user = await admin.findOne({ email: email })
+      const user = await admin.findOne({ email: email });
       if (user != null) {
-        const isMatch = await bcrypt.compare(password, user.password)
-        if ((user.email === email) && isMatch) {
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (user.email === email && isMatch) {
           // Generate JWT Token
-          const token = jwt.sign({ userID: user._id }, process.env.JWT_SECRET_KEY, { expiresIn: '5d' })
-          res.send({ "status": "success", "message": "Login Success", "token": token })
+          const token = jwt.sign(
+            { userID: user._id },
+            process.env.JWT_SECRET_KEY,
+            { expiresIn: "5d" }
+          );
+          res.send({
+            status: "success",
+            message: "Login Success",
+            token: token,
+          });
         } else {
-          res.send({ "status": "failed", "message": "Email or Password is not Valid" })
+          res.send({
+            status: "failed",
+            message: "Email or Password is not Valid",
+          });
         }
       } else {
-        res.send({ "status": "failed", "message": "You are not a Registered User" })
+        res.send({
+          status: "failed",
+          message: "You are not a Registered User",
+        });
       }
     } else {
-      res.send({ "status": "failed", "message": "All Fields are Required" })
+      res.send({ status: "failed", message: "All Fields are Required" });
     }
   } catch (error) {
-    console.log(error)
-    res.send({ "status": "failed", "message": "Unable to Login" })
+    console.log(error);
+    res.send({ status: "failed", message: "Unable to Login" });
   }
-}
+};
 
 export const changeAdminPassword = async (req, res) => {
-  const { password, password_confirmation } = req.body
+  const { password, password_confirmation } = req.body;
   if (password && password_confirmation) {
     if (password !== password_confirmation) {
-      res.send({ "status": "failed", "message": "New Password and Confirm New Password doesn't match" })
+      res.send({
+        status: "failed",
+        message: "New Password and Confirm New Password doesn't match",
+      });
     } else {
-      const salt = await bcrypt.genSalt(10)
-      const newHashPassword = await bcrypt.hash(password, salt)
+      const salt = await bcrypt.genSalt(10);
+      const newHashPassword = await bcrypt.hash(password, salt);
       // console.log(req.user,"dfsdfsadfasdf");
-      await admin.findByIdAndUpdate(req.user._id, { $set: { password: newHashPassword } })
-      res.send({ "status": "success", "message": "Password changed succesfully" })
+      await admin.findByIdAndUpdate(req.user._id, {
+        $set: { password: newHashPassword },
+      });
+      res.send({ status: "success", message: "Password changed succesfully" });
     }
   } else {
-    res.send({ "status": "failed", "message": "All Fields are Required" })
+    res.send({ status: "failed", message: "All Fields are Required" });
   }
-}
+};
 
 export const loggedAdmin = async (req, res) => {
-  res.send({ "Admin": req.user })
-}
+  res.send({ Admin: req.user });
+};
 
 export const sendAdminPasswordResetEmail = async (req, res) => {
-  const { email } = req.body
+  const { email } = req.body;
   console.log(req.body);
   if (email) {
-    const user = await admin.findOne({ email: email })
+    const user = await admin.findOne({ email: email });
     if (user) {
-      const secret = user._id + process.env.JWT_SECRET_KEY
-      const token = jwt.sign({ userID: user._id }, secret, { expiresIn: '15m' })
-      const link = `${process.env.SERVER}/users/reset-password/${user._id}/${token}`
-      console.log(link)
+      const secret = user._id + process.env.JWT_SECRET_KEY;
+      const token = jwt.sign({ userID: user._id }, secret, {
+        expiresIn: "15m",
+      });
+      const link = `${process.env.SERVER}/users/reset-password/${user._id}/${token}`;
+      console.log(link);
       // // Send Email
       let info = await transporter.sendMail({
         from: process.env.EMAIL_FROM,
         to: user.email,
         subject: "Password Reset Link",
-        html: `<a href=${link}>Click Here</a> to Reset Your Password`
-      })
-      res.send({ "status": "success", "message": "Password Reset Email Sent... Please Check Your Email" })
+        html: `<a href=${link}>Click Here</a> to Reset Your Password`,
+      });
+      res.send({
+        status: "success",
+        message: "Password Reset Email Sent... Please Check Your Email",
+      });
     } else {
-      res.send({ "status": "failed", "message": "Email doesn't exists" })
+      res.send({ status: "failed", message: "Email doesn't exists" });
     }
   } else {
-    res.send({ "status": "failed", "message": "Email Field is Required" })
+    res.send({ status: "failed", message: "Email Field is Required" });
   }
-}
+};
 
 export const AdminPasswordReset = async (req, res) => {
-  const { password, password_confirmation } = req.body
-  const { id, token } = req.params
+  const { password, password_confirmation } = req.body;
+  const { id, token } = req.params;
   console.log(req.params);
-  const user = await admin.findById(id)
-  const new_secret = user._id + process.env.JWT_SECRET_KEY
+  const user = await admin.findById(id);
+  const new_secret = user._id + process.env.JWT_SECRET_KEY;
   try {
-    jwt.verify(token, new_secret)
+    jwt.verify(token, new_secret);
     if (password && password_confirmation) {
       if (password !== password_confirmation) {
-        res.send({ "status": "failed", "message": "New Password and Confirm New Password doesn't match" })
+        res.send({
+          status: "failed",
+          message: "New Password and Confirm New Password doesn't match",
+        });
       } else {
-        const salt = await bcrypt.genSalt(10)
-        const newHashPassword = await bcrypt.hash(password, salt)
-        await admin.findByIdAndUpdate(user._id, { $set: { password: newHashPassword } })
-        res.send({ "status": "success", "message": "Password Reset Successfully" })
+        const salt = await bcrypt.genSalt(10);
+        const newHashPassword = await bcrypt.hash(password, salt);
+        await admin.findByIdAndUpdate(user._id, {
+          $set: { password: newHashPassword },
+        });
+        res.send({ status: "success", message: "Password Reset Successfully" });
       }
     } else {
-      res.send({ "status": "failed", "message": "All Fields are Required" })
+      res.send({ status: "failed", message: "All Fields are Required" });
     }
   } catch (error) {
-    console.log(error)
-    res.send({ "status": "failed", "message": "Invalid Token" })
+    console.log(error);
+    res.send({ status: "failed", message: "Invalid Token" });
   }
-}
-
+};
 
 /**
  *
@@ -180,10 +206,10 @@ export const createCandidate = async (req, res) => {
     futureGoal,
     currentAddress,
     collegeName,
-    experience
+    experience,
   } = req.body;
   const user = await candidate.findOne({ email: email });
-  console.log(user);
+  console.log(user ,"ddfdf");
   if (user) {
     res.status(404).send({ status: "failed", message: "Email already exists" });
   } else {
@@ -223,21 +249,23 @@ export const createCandidate = async (req, res) => {
           futureGoal: futureGoal,
           currentAddress: currentAddress,
           collegeName: collegeName,
-          experience:experience,
+          experience: experience,
           batch: batch,
           collegeId: collegeId,
         });
         await doc.save();
+        const candi = await candidate.findOne({ email: email });
         let info = await transporter.sendMail({
           from: process.env.EMAIL_FROM,
           to: process.env.EMAIL_FROM,
           subject: "candidate register",
-          html: `<h1>new candidate registered <h1/>`
-        })
-        
+          html: `<h1>new candidate registered <h1/>`,
+        });
+        console.log(candi._id, "candidate id");
         res.status(201).send({
           status: "success",
           message: "Registration Success",
+          candidateid:candi._id
         });
       } catch (error) {
         console.log(error);
@@ -268,7 +296,7 @@ export const getCandidateData = (req, res) => {
  * 
  changing firstName and currentAddress if firstName is "Lucky"
  */
-export const updateCandidateInfo = async(req, res) => {
+export const updateCandidateInfo = async (req, res) => {
   const {
     firstName,
     middleName,
@@ -284,73 +312,64 @@ export const updateCandidateInfo = async(req, res) => {
 
   const user = await candidate.findOne({ email: email });
   if (user) {
-  var myquery = { email: email };
-  var newvalues = {
-    $set: {
-      firstName: firstName,
-      middleName: middleName,
-      lastName: lastName,
-      email: email,
-      dob: dob,
-      mobileNo: mobileNo,
-      educationDetails: educationDetails,
-      areaOfIntrest: areaOfIntrest,
-      futureGoal: futureGoal,
-      currentAddress: currentAddress,
-    },
-  };
-  candidate.updateOne(myquery, newvalues, function (err, data) {
-    if (err) {
-      console.log(err);
-    } else {
-      res
-            .status(201)
-            .send({
-              status: "success",
-              message: `${data.modifiedCount} document updated`,
-            });}
-  });
-  }else{
-    res
-            .status(404)
-            .send({
-              status: "failed",
-              message: `user doesn't exist with this mailId`,
-            });
+    var myquery = { email: email };
+    var newvalues = {
+      $set: {
+        firstName: firstName,
+        middleName: middleName,
+        lastName: lastName,
+        email: email,
+        dob: dob,
+        mobileNo: mobileNo,
+        educationDetails: educationDetails,
+        areaOfIntrest: areaOfIntrest,
+        futureGoal: futureGoal,
+        currentAddress: currentAddress,
+      },
+    };
+    candidate.updateOne(myquery, newvalues, function (err, data) {
+      if (err) {
+        console.log(err);
+      } else {
+        res.status(201).send({
+          status: "success",
+          message: `${data.modifiedCount} document updated`,
+        });
+      }
+    });
+  } else {
+    res.status(404).send({
+      status: "failed",
+      message: `user doesn't exist with this mailId`,
+    });
   }
-  
-
 };
 
 /**
  deleating documets based on email
  */
-export const deleteCandidateInfo = async(req, res) => {
-  const { email } = req.body
+export const deleteCandidateInfo = async (req, res) => {
+  const { email } = req.body;
   console.log(email);
   const user = await candidate.findOne({ email: email });
   if (user) {
-  candidate.deleteOne({ email: email }, function (err, data) {
-    if (err) {
-      res.send(err);
-    } else {
-      res
-      .status(201)
-      .send({
-        status: "Success",
-        message: `${data.deletedCount} document deleted`,
-      });
-    }
-  });
-}
-else{
-  res
-  .status(404)
-  .send({
-    status: "failed",
-    message: `user doesn't exist with this mailId`,
-  });
-}};
+    candidate.deleteOne({ email: email }, function (err, data) {
+      if (err) {
+        res.send(err);
+      } else {
+        res.status(201).send({
+          status: "Success",
+          message: `${data.deletedCount} document deleted`,
+        });
+      }
+    });
+  } else {
+    res.status(404).send({
+      status: "failed",
+      message: `user doesn't exist with this mailId`,
+    });
+  }
+};
 
 /**
    * 
@@ -360,14 +379,14 @@ data will be recived from frontend
 
 export const createQuestion = async (req, res) => {
   const { question, options, optionType, ans } = req.body;
-
+const{tit}=options
   if (question && options && optionType && ans) {
     try {
       const doc = new questions({
-        question:question,
-        options:options,
-        optionType:optionType,
-        ans:ans,
+        question: question,
+        options: options,
+        optionType: optionType,
+        ans: ans,
       });
       await doc.save();
       res.status(201).send({
@@ -382,8 +401,6 @@ export const createQuestion = async (req, res) => {
     res.send({ status: "failed", message: "All fields are required" });
   }
 };
-
-
 
 /**
  * 
@@ -409,15 +426,19 @@ export const updateQuestion = (req, res) => {
   let newvalues = {
     $set: { question: "what is capital of gujrat", ans: "Ahemdabad" },
   };
-  const updateddata = questions.updateOne(myquery, newvalues, function (err, data) {
-    if (err) {
-      res.send(Error)
-      console.log(err);
-    } else {
-      res.send("one documet updated");
-      console.log("Data updated!", updateddata);
+  const updateddata = questions.updateOne(
+    myquery,
+    newvalues,
+    function (err, data) {
+      if (err) {
+        res.send(Error);
+        console.log(err);
+      } else {
+        res.send("one documet updated");
+        console.log("Data updated!", updateddata);
+      }
     }
-  });
+  );
 };
 
 /**
@@ -436,32 +457,27 @@ export const deleteQuestion = (req, res) => {
   });
 };
 
-
 export const createCollege = async (req, res) => {
-  const {collegeName,show} = req.body;
+  const { collegeName, show } = req.body;
   const user = await college.findOne({ collegeName: collegeName });
   if (user) {
     res.send({ status: "failed", message: "College already exists" });
   } else {
-    if (collegeName && show ) {
-     
-        try {
-         
-          const collegeData = new college({
-            collegeName: collegeName,
-            show: show,
-          });
-          await collegeData.save();
-          res
-            .status(201)
-            .send({
-              status: "success",
-              message: "College Added Successfully",
-            });
-        } catch (error) {
-          console.log(error);
-          res.send({ status: "failed", message: "Unable to Add college" });
-        }
+    if (collegeName && show) {
+      try {
+        const collegeData = new college({
+          collegeName: collegeName,
+          show: show,
+        });
+        await collegeData.save();
+        res.status(201).send({
+          status: "success",
+          message: "College Added Successfully",
+        });
+      } catch (error) {
+        console.log(error);
+        res.send({ status: "failed", message: "Unable to Add college" });
+      }
     } else {
       res.send({ status: "failed", message: "All fields are required" });
     }
@@ -485,7 +501,7 @@ export const createCollege = async (req, res) => {
 //             res.send("new college added to database");
 //           })
 //           .catch((err) => {
-           
+
 //             res.send("unable to save to database", err);
 //           });
 //       } else {
@@ -502,27 +518,45 @@ export const getCollegeData = (req, res) => {
     if (err) {
       console.log(err);
     } else {
-    //  let clgName=[]
-    //   for(let i=0; i<data.length; i++){
-    //     clgName[i]=data[i].collegeName
-    //   }
-      res.status(201).send(data)
+      //  let clgName=[]
+      //   for(let i=0; i<data.length; i++){
+      //     clgName[i]=data[i].collegeName
+      //   }
+      res.status(201).send(data);
     }
   });
-}; 
+};
 
 export const sendresult = async (req, res) => {
-  var user = candidate.findOne({ firstName: "Lucky" });
-  console.log(user[0].email);
-  const candidates = candidate.find(
-    { firstName: "Lucky" },
-    function (err, data) {
-      if (err) {
-        console.log(err);
-      } else {
-        res.send(data);
-        console.log(data);
-      }
+  console.log();
+  const date = new Date();
+  const testDate = {
+    mm: date.getMonth(),
+    dd: date.getDate(),
+    yy: date.getFullYear().toString().slice(-2),
+  };
+ 
+  const { candidateId, questionAnswer } = req.body;
+  const {questionId,ans}=questionAnswer
+  console.log(questionAnswer);
+  if (candidateId && testDate && questionAnswer) {
+    try {
+      const docu = new result({
+        candidateId: candidateId,
+        testDate: testDate,
+        questionAnswer: [{ questionId: questionId, ans: ans }],
+      });
+      await docu.save();
+      res.status(201).send({
+        status: "success",
+        message: "Submit test successully",
+      });
+    } catch(err){
+      console.log(error);
+      res.send({ status: "failed", message: "Unable to Register" });
     }
-  );
+  } else {
+    res.send({ status: "failed", message: "All fields are required" });
+  }
 };
+

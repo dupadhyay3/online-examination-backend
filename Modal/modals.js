@@ -25,31 +25,6 @@ export const CandidateSchema = new mongoose.Schema({
     
 });
 
-// {
-//       id: 11,
-//       title: "ovvnbnne",
-//       options: [
-//         {
-//           title: "A",
-//           value: false,
-//         },
-//         {
-//           title: "B",
-//           value: true,
-//         },
-//         {
-//           title: "C",
-//           value: true,
-//         },
-//         {
-//           title: "D",
-//           value: false,
-//         },
-//       ],
-//       marks: 5,
-//       isMultiAns: true,
-//     },
-
 // creating schema for question
 export const QuestionSchema = new mongoose.Schema({
   question: String,
@@ -60,24 +35,30 @@ export const QuestionSchema = new mongoose.Schema({
       },
       value: {
           type: Boolean,
-          required: true,
+          required: false,
           default: false
-      }
+      },
+      query:{type:String, required:false}
   }],
+  
   optionType: {
     type: String,
-    enum : ['Single','Multiple'],
+    enum : ['Single','Multiple',"Query"],
     default: 'Single'
   },
-  ans: String || Array,
+  ans: Array,
 });
 
 
 export const candidateResultSchema = new mongoose.Schema({
-    candidate: Number,
-    quations: Number,
-    candidateAns:String,
-    results: String,
+    candidateId: {type:Object},
+    testDate: {type:Object},
+    questionAnswer:[
+      {
+        questionId:{type:Object},
+        ans: Array
+      }
+    ]
 });
 
 export const collegeSchema = new mongoose.Schema({
