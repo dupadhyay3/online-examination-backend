@@ -6,7 +6,7 @@ import ManagementRoutes from "./Route/protectedRoutes.js";
 import bodyParser from "body-parser";
 import { sendEmail } from "./Services/mail.js";
 import cors from "cors";
-const PORT = 5000;
+
 app.use(
   cors({
     origin: "*",
@@ -26,7 +26,7 @@ app.use("/management", ManagementRoutes)
 // sending mail
 // sendEmail('Aakashsumanpurple3012@gmail.com','Aakashsumanpurple306@gmail.com','Test mail',"email functanailty added")
 
-app.listen(PORT, () => {
+app.listen(process.env.PORT, () => {
   // res.send("HEllo");
-  console.log(`listening to the port number ${PORT} `);
+  console.log(`listening to the port number ${process.env.PORT} `);
 });
