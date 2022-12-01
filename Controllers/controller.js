@@ -529,7 +529,6 @@ export const getCollegeData = (req, res) => {
 };
 
 export const sendresult = async (req, res) => {
-  console.log();
   const date = new Date();
   const testDate = {
     mm: date.getMonth(),
@@ -539,13 +538,12 @@ export const sendresult = async (req, res) => {
  
   const { candidateId, questionAnswer } = req.body;
   const {questionId,ans}=questionAnswer
-  console.log(questionAnswer);
   if (candidateId && testDate && questionAnswer) {
     try {
       const docu = new result({
         candidateId: candidateId,
         testDate: testDate,
-        questionAnswer: [{ questionId: questionId, ans: ans }],
+        questionAnswer: questionAnswer,
       });
       await docu.save();
       res.status(201).send({
@@ -553,7 +551,6 @@ export const sendresult = async (req, res) => {
         message: "Submit test successully",
       });
     } catch(err){
-      console.log(err);
       res.send({ status: "failed", message: "Unable to Register" });
     }
   } else {
