@@ -31,7 +31,7 @@ export const QuestionSchema = new mongoose.Schema({
   options: [{
       title: {
           type: String,
-          required: true
+          required: false
       },
       value: {
           type: Boolean,

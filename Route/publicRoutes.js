@@ -14,6 +14,6 @@ userRoutes.put("/candidate/update", updateCandidateInfo);
 
 userRoutes.get("/college/get",getCollegeData );
 
-userRoutes.post("/result/send",sendresult );
+userRoutes.post("/test/submit",sendresult );
 
 export default userRoutes;

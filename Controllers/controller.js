@@ -379,7 +379,8 @@ data will be recived from frontend
 
 export const createQuestion = async (req, res) => {
   const { question, options, optionType, ans } = req.body;
-const{tit}=options
+
+// (value || query)
   if (question && options && optionType && ans) {
     try {
       const doc = new questions({
@@ -552,7 +553,7 @@ export const sendresult = async (req, res) => {
         message: "Submit test successully",
       });
     } catch(err){
-      console.log(error);
+      console.log(err);
       res.send({ status: "failed", message: "Unable to Register" });
     }
   } else {
