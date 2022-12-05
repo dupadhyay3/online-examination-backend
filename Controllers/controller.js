@@ -101,6 +101,7 @@ export const adminLogin = async (req, res) => {
 
 export const changeAdminPassword = async (req, res) => {
   const { password, password_confirmation } = req.body;
+  console.log("ppppppppppppppp-----------",password);
   if (password && password_confirmation) {
     if (password !== password_confirmation) {
       res.send({
@@ -559,3 +560,14 @@ export const sendresult = async (req, res) => {
   }
 };
 
+
+export const getCandidateResult = async(req, res) => {
+  const _id = req.params.id
+  // console.log(req.query.ID, "QUERY");
+  console.log(_id);
+  const data= await result.findById({_id:_id})
+  console.log(data);
+  if(data){
+    res.status(201).send(data)
+  }
+};
