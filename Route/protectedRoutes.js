@@ -13,7 +13,7 @@ ManagementRoutes.use('/admin/change', checkAdminAuth)
 ManagementRoutes.post("/admin/create",adminRegisteration );
 ManagementRoutes.post("/admin/login",adminLogin );
 ManagementRoutes.post('/send-reset-password-email', sendAdminPasswordResetEmail)
-ManagementRoutes.post('/reset-password/:id/:token', AdminPasswordReset)
+ManagementRoutes.post('/reset/password/:id/:token', AdminPasswordReset)
 
 //proctected routes
 ManagementRoutes.post("/admin/change",changeAdminPassword );

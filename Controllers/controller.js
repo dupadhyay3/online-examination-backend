@@ -135,7 +135,7 @@ export const sendAdminPasswordResetEmail = async (req, res) => {
       const token = jwt.sign({ userID: user._id }, secret, {
         expiresIn: "15m",
       });
-      const link = `${process.env.SERVER}/users/reset-password/${user._id}/${token}`;
+      const link = `${process.env.SERVER}/management/reset/password/${user._id}/${token}`;
       console.log(link);
       // // Send Email
       let info = await transporter.sendMail({
@@ -158,6 +158,7 @@ export const sendAdminPasswordResetEmail = async (req, res) => {
 
 export const AdminPasswordReset = async (req, res) => {
   const { password, password_confirmation } = req.body;
+  console.log(password, password_confirmation, "reqqqqqqqqqqqqqq");
   const { id, token } = req.params;
   console.log(req.params);
   const user = await admin.findById(id);

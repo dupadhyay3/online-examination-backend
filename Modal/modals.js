@@ -7,7 +7,7 @@ export const CandidateSchema = new mongoose.Schema({
   lastName: {type:String, required:true},
   email: {type:String, required:true},
   dob: {type:String, required:true},
-  mobileNo: {type:Number, required:true},
+  mobileNo: {type:String, required:true},
   educationDetails: {type:String, required:true},
   areaOfIntrest: {type:String, required:true},
   futureGoal: {type:String, required:true},
