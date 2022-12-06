@@ -589,7 +589,8 @@ export const updateResult = async(req, res) => {
   if (user) {
     console.log(user[0].questionAnswer,"---------------");
     console.log(questionAnswer);
-   const newData= user[0].questionAnswer.concat(questionAnswer)
+    // user[0].questionAnswer
+   const newData= questionAnswer
   //  console.log("newdata",newData);
     var myquery = { candidateId: candidateId};
     var newvalues = {
