@@ -100,7 +100,8 @@ export const adminLogin = async (req, res) => {
 };
 
 export const changeAdminPassword = async (req, res) => {
-  const { password, password_confirmation } = req.body;
+  const { password, password_confirmation } = req.body.body;
+  console.log(req.body);
   console.log("ppppppppppppppp-----------",password);
   if (password && password_confirmation) {
     if (password !== password_confirmation) {

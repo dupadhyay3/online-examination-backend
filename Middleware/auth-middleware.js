@@ -8,13 +8,12 @@ var checkAdminAuth = async (req, res, next) => {
     try {
       // Get Token from header
       token = authorization.split(' ')[1]
-console.log("insidedddddddddddd",token);
-
       // Verify Token
+      console.log(jwt.verify(token, process.env.JWT_SECRET_KEY));
       const { userID } = jwt.verify(token, process.env.JWT_SECRET_KEY)
-console.log("verifyyyyyyyyyyy",userID);
+    const _id=userID
       // Get User from Token
-      req.user = await admin.findById(userID).select('-password')
+      req.user = await admin.findById(_id).select('-password')
       console.log(req.user, "requesr from user");
       next()
     } catch (error) {
