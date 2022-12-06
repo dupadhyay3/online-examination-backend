@@ -2,7 +2,7 @@ import express from "express";
 const ManagementRoutes = express.Router();
 
 
-import {getCandidateResult,adminRegisteration,adminLogin,changeAdminPassword,loggedAdmin,sendAdminPasswordResetEmail,AdminPasswordReset, createCollege, getCollegeData, sendresult,getCandidateData,deleteCandidateInfo,createQuestion,getQuestionInfo,updateQuestion,deleteQuestion} from "../Controllers/controller.js"
+import {getAllCandidateResult,getCandidateResult,adminRegisteration,adminLogin,changeAdminPassword,loggedAdmin,sendAdminPasswordResetEmail,AdminPasswordReset, createCollege, getCollegeData, sendresult,getCandidateData,deleteCandidateInfo,createQuestion,getQuestionInfo,updateQuestion,deleteQuestion} from "../Controllers/controller.js"
 import checkAdminAuth from "../Middleware/auth-middleware.js"
 
 //route level middleware
@@ -45,7 +45,7 @@ ManagementRoutes.delete("/question/delete",deleteQuestion)
 
 ManagementRoutes.get("/result/send",sendresult )
 ManagementRoutes.get("/result/get/:id",getCandidateResult )
-
+ManagementRoutes.get("/result/get",getAllCandidateResult )
 
 // creating college in database
 ManagementRoutes.post("/college/create",createCollege );

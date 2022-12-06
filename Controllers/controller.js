@@ -573,6 +573,13 @@ export const getCandidateResult = async(req, res) => {
   }
 };
 
+export const getAllCandidateResult = async(req, res) => {
+  const data= await result.find()
+  console.log(data);
+  if(data){
+    res.status(201).send(data)
+  }
+};
 export const updateResult = async(req, res) => {
   const { candidateId, questionAnswer } =req.body
   // console.log(candidateId, questionAnswer);
@@ -606,4 +613,28 @@ export const updateResult = async(req, res) => {
       message: `user doesn't exist with this Id`,
     });
   }
+};
+
+export const randomQuestion = (req, res) => {
+  questions.find(function (err, data) {
+    if (err) {
+      console.log(err);
+    } else {
+      function shuffleArray(array) {
+        let i = array.length - 1;
+        for (; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          const temp = array[i];
+          array[i] = array[j];
+          array[j] = temp;
+        }
+        return array;
+      }
+      
+      function RecommendedPosts({ posts }) {
+        const shuffledPosts = shuffleArray(data);}
+      res.send(shuffledPosts);
+      // console.log(data);
+    }
+  });
 };
