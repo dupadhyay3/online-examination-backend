@@ -46,6 +46,7 @@ ManagementRoutes.delete("/question/delete",deleteQuestion)
 ManagementRoutes.get("/result/send",sendresult )
 ManagementRoutes.get("/result/get/:id",getCandidateResult )
 
+
 // creating college in database
 ManagementRoutes.post("/college/create",createCollege );
 

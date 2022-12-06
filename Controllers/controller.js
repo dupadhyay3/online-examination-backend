@@ -564,11 +564,46 @@ export const sendresult = async (req, res) => {
 
 export const getCandidateResult = async(req, res) => {
   const _id = req.params.id
-  // console.log(req.query.ID, "QUERY");
+  // console.log(req.query._id, "QUERY");
   console.log(_id);
-  const data= await result.findById({_id:_id})
+  const data= await result.find({candidateId:_id})
   console.log(data);
   if(data){
     res.status(201).send(data)
+  }
+};
+
+export const updateResult = async(req, res) => {
+  const { candidateId, questionAnswer } =req.body
+  // console.log(candidateId, questionAnswer);
+  // console.log(candidateId,"candidateId");
+  const user = await result.find({ candidateId: candidateId });
+  // console.log(user, "userrrrrrrrrrrrrrrrrrrr");
+  if (user) {
+    console.log(user[0].questionAnswer,"---------------");
+    console.log(questionAnswer);
+   const newData= user[0].questionAnswer.concat(questionAnswer)
+  //  console.log("newdata",newData);
+    var myquery = { candidateId: candidateId};
+    var newvalues = {
+      $set: {
+        questionAnswer: newData,
+      },
+    };
+    result.updateOne(myquery, newvalues, function (err, data) {
+      if (err) {
+        console.log(err);
+      } else {
+        res.status(201).send({
+          status: "success",
+          message: `${data.modifiedCount} document updated`,
+        });
+      }
+    });
+  } else {
+    res.status(404).send({
+      status: "failed",
+      message: `user doesn't exist with this Id`,
+    });
   }
 };

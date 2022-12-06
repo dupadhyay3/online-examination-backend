@@ -1,6 +1,6 @@
 import express from "express";
 const userRoutes = express.Router();
-import {createCandidate,updateCandidateInfo,getQuestionInfo,getCollegeData,sendresult} from "../Controllers/controller.js"
+import {updateResult,createCandidate,updateCandidateInfo,getQuestionInfo,getCollegeData,sendresult} from "../Controllers/controller.js"
 
 // creating candidate in database
 userRoutes.post("/candidate/create",createCandidate );
@@ -15,5 +15,5 @@ userRoutes.put("/candidate/update", updateCandidateInfo);
 userRoutes.get("/college/get",getCollegeData );
 
 userRoutes.post("/test/submit",sendresult );
-
+userRoutes.put("/result/update",updateResult )
 export default userRoutes;
