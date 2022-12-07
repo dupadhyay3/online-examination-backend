@@ -40,7 +40,6 @@ export const QuestionSchema = new mongoose.Schema({
       },
       query:{type:String, required:false}
   }],
-  
   optionType: {
     type: String,
     enum : ['Single','Multiple',"Query"],

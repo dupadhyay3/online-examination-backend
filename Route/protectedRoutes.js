@@ -2,7 +2,7 @@ import express from "express";
 const ManagementRoutes = express.Router();
 
 
-import {getAllCandidateResult,getCandidateResult,adminRegisteration,adminLogin,changeAdminPassword,loggedAdmin,sendAdminPasswordResetEmail,AdminPasswordReset, createCollege, getCollegeData, sendresult,getCandidateData,deleteCandidateInfo,createQuestion,getQuestionInfo,updateQuestion,deleteQuestion} from "../Controllers/controller.js"
+import {getSingleQuestion,getCandidateByID,getAllCandidateResult,getCandidateResult,adminRegisteration,adminLogin,changeAdminPassword,loggedAdmin,sendAdminPasswordResetEmail,AdminPasswordReset, createCollege, getCollegeData, sendresult,getCandidateData,deleteCandidateInfo,createQuestion,getQuestionInfo,updateQuestion,deleteQuestion} from "../Controllers/controller.js"
 import checkAdminAuth from "../Middleware/auth-middleware.js"
 
 //route level middleware
@@ -21,21 +21,18 @@ ManagementRoutes.get("/loggedAdmin",loggedAdmin)
 
 // getting candidates info from db
 ManagementRoutes.get("/candidate/get", getCandidateData);
-
+ManagementRoutes.get("/candidateall/get/:id", getCandidateByID);
 
 
 // deleting candidate document based on firstName
 ManagementRoutes.delete("/candidate/delete", deleteCandidateInfo);
-
-
-
-
 
 // Creating a question 
 ManagementRoutes.post("/question/create",createQuestion );
 
 // getting data from question collection
 ManagementRoutes.get("/question/get",getQuestionInfo );
+ManagementRoutes.get("/question/get/:id",getSingleQuestion );
 
 //updating data in question collection
 ManagementRoutes.put("/question/update",updateQuestion)

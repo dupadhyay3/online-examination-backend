@@ -162,6 +162,7 @@ export const AdminPasswordReset = async (req, res) => {
   const { password, password_confirmation } = req.body;
   console.log(password, password_confirmation, "reqqqqqqqqqqqqqq");
   const { id, token } = req.params;
+  console.log(id, "iddddddddddddddd");
   console.log(req.params);
   const user = await admin.findById(id);
   const new_secret = user._id + process.env.JWT_SECRET_KEY;
@@ -295,6 +296,20 @@ export const getCandidateData = (req, res) => {
   });
 };
 
+export const getCandidateByID = async(req, res) => {
+  console.log("hello");
+  const id = req.params.id
+  
+  console.log(id);
+  const data= await candidate.findById(id)
+  console.log("data",data);
+  if(data){
+    res.status(201).send(data)
+  }
+  else{
+    res.status(201).send("candidate doesn't exist with this Id")
+  }
+};
 /**
  * 
  changing firstName and currentAddress if firstName is "Lucky"
@@ -426,6 +441,7 @@ export const getQuestionInfo = (req, res) => {
  updating question if ans is Ahemdabad
  */
 export const updateQuestion = (req, res) => {
+
   let myquery = { ans: "Jaipur" };
   let newvalues = {
     $set: { question: "what is capital of gujrat", ans: "Ahemdabad" },
@@ -638,4 +654,19 @@ export const randomQuestion = (req, res) => {
       // console.log(data);
     }
   });
+};
+
+export const getSingleQuestion= async(req, res) => {
+  console.log("hello");
+  const id = req.params.id
+  
+  console.log(id);
+  const data= await questions.findById(id)
+  console.log("data",data);
+  if(data){
+    res.status(201).send(data)
+  }
+  else{
+    res.status(201).send("candidate doesn't exist with this Id")
+  }
 };
