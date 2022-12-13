@@ -2,7 +2,7 @@ import express from "express";
 const ManagementRoutes = express.Router();
 
 
-import {getSingleQuestion,getCandidateByID,getAllCandidateResult,getCandidateResult,adminRegisteration,adminLogin,changeAdminPassword,loggedAdmin,sendAdminPasswordResetEmail,AdminPasswordReset, createCollege, getCollegeData, sendresult,getCandidateData,deleteCandidateInfo,createQuestion,getQuestionInfo,updateQuestion,deleteQuestion} from "../Controllers/controller.js"
+import {updateCandidateInfo,getSingleQuestion,getCandidateByID,getAllCandidateResult,getCandidateResult,adminRegisteration,adminLogin,changeAdminPassword,loggedAdmin,sendAdminPasswordResetEmail,AdminPasswordReset, createCollege, getCollegeData, sendresult,getCandidateData,deleteCandidateInfo,createQuestion,getQuestionInfo,updateQuestion,deleteQuestion} from "../Controllers/controller.js"
 import checkAdminAuth from "../Middleware/auth-middleware.js"
 
 //route level middleware
@@ -22,10 +22,12 @@ ManagementRoutes.get("/loggedAdmin",loggedAdmin)
 // getting candidates info from db
 ManagementRoutes.get("/candidate/get", getCandidateData);
 ManagementRoutes.get("/candidateall/get/:id", getCandidateByID);
+// updating candidates info based on firstName
+ManagementRoutes.put("/candidate/update/:id", updateCandidateInfo);
 
 
 // deleting candidate document based on firstName
-ManagementRoutes.delete("/candidate/delete", deleteCandidateInfo);
+ManagementRoutes.delete("/candidate/delete/:id", deleteCandidateInfo);
 
 // Creating a question 
 ManagementRoutes.post("/question/create",createQuestion );
@@ -35,11 +37,9 @@ ManagementRoutes.get("/question/get",getQuestionInfo );
 ManagementRoutes.get("/question/get/:id",getSingleQuestion );
 
 //updating data in question collection
-ManagementRoutes.put("/question/update",updateQuestion)
-
+ManagementRoutes.put("/question/update/:id",updateQuestion)
 // deleting data in question table
-ManagementRoutes.delete("/question/delete",deleteQuestion)
-
+ManagementRoutes.delete("/question/delete/:id",deleteQuestion)
 ManagementRoutes.get("/result/send",sendresult )
 ManagementRoutes.get("/result/get/:id",getCandidateResult )
 ManagementRoutes.get("/result/get",getAllCandidateResult )
