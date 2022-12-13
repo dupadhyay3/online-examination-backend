@@ -310,10 +310,38 @@ export const getCandidateByID = async(req, res) => {
     res.status(201).send("candidate doesn't exist with this Id")
   }
 };
+
 /**
  * 
  changing firstName and currentAddress if firstName is "Lucky"
  */
+export const updateQuestion = (req, res) => {
+  const { question, options, optionType, ans } = req.body;
+  const _id = req.params.id;
+  console.log("questionID", _id);
+  let myquery = { _id: _id };
+  let newvalues = {
+    $set: {
+      question: question,
+      options: options,
+      optionType: optionType,
+      ans: ans,
+    },
+  };
+  const updateddata = questions.updateOne(
+    myquery,
+    newvalues,
+    function (err, data) {
+      if (err) {
+        res.send(Error);
+        console.log(err);
+      } else {
+        res.send("one documet updated");
+        console.log("Data updated!", updateddata);
+      }
+    }
+  );
+};
 export const updateCandidateInfo = async (req, res) => {
   const {
     firstName,
@@ -322,15 +350,19 @@ export const updateCandidateInfo = async (req, res) => {
     email,
     dob,
     mobileNo,
+    collegeName,
+    experience,
+    currentAddress,
     educationDetails,
     areaOfIntrest,
     futureGoal,
-    currentAddress,
+  
   } = req.body;
-
-  const user = await candidate.findOne({ email: email });
+  const _id = req.params.id;
+  console.log("ID", _id);
+  const user = await candidate.findOne({ _id: _id });
   if (user) {
-    var myquery = { email: email };
+    var myquery = { _id: _id };
     var newvalues = {
       $set: {
         firstName: firstName,
@@ -339,10 +371,13 @@ export const updateCandidateInfo = async (req, res) => {
         email: email,
         dob: dob,
         mobileNo: mobileNo,
+        collegeName: collegeName,
+        experience: experience,
+        currentAddress: currentAddress,
         educationDetails: educationDetails,
         areaOfIntrest: areaOfIntrest,
         futureGoal: futureGoal,
-        currentAddress: currentAddress,
+        
       },
     };
     candidate.updateOne(myquery, newvalues, function (err, data) {
@@ -358,7 +393,7 @@ export const updateCandidateInfo = async (req, res) => {
   } else {
     res.status(404).send({
       status: "failed",
-      message: `user doesn't exist with this mailId`,
+      message: `user doesn't exist with this Id`,
     });
   }
 };
@@ -369,9 +404,11 @@ export const updateCandidateInfo = async (req, res) => {
 export const deleteCandidateInfo = async (req, res) => {
   const { email } = req.body;
   console.log(email);
-  const user = await candidate.findOne({ email: email });
+  const _id = req.params.id;
+  console.log("ID", _id);
+  const user = await candidate.findOne({ _id: _id });
   if (user) {
-    candidate.deleteOne({ email: email }, function (err, data) {
+    candidate.deleteOne({ _id: _id }, function (err, data) {
       if (err) {
         res.send(err);
       } else {
@@ -384,7 +421,7 @@ export const deleteCandidateInfo = async (req, res) => {
   } else {
     res.status(404).send({
       status: "failed",
-      message: `user doesn't exist with this mailId`,
+      message: `user doesn't exist with this Id`,
     });
   }
 };
@@ -398,7 +435,7 @@ data will be recived from frontend
 export const createQuestion = async (req, res) => {
   const { question, options, optionType, ans } = req.body;
 
-// (value || query)
+  // (value || query)
   if (question && options && optionType && ans) {
     try {
       const doc = new questions({
@@ -440,41 +477,34 @@ export const getQuestionInfo = (req, res) => {
  * 
  updating question if ans is Ahemdabad
  */
-export const updateQuestion = (req, res) => {
 
-  let myquery = { ans: "Jaipur" };
-  let newvalues = {
-    $set: { question: "what is capital of gujrat", ans: "Ahemdabad" },
-  };
-  const updateddata = questions.updateOne(
-    myquery,
-    newvalues,
-    function (err, data) {
-      if (err) {
-        res.send(Error);
-        console.log(err);
-      } else {
-        res.send("one documet updated");
-        console.log("Data updated!", updateddata);
-      }
-    }
-  );
-};
 
 /**
  * 
 deleting question if ans is "Ahemdabad"
  */
 
-export const deleteQuestion = (req, res) => {
-  questions.deleteOne({ ans: "Ahemdabad" }, function (err, data) {
-    if (err) {
-      console.log(err, "user doesn't existssss");
-    } else {
-      res.send("one document deleted");
-      console.log("one document deleted", data);
-    }
-  });
+export const deleteQuestion = async (req, res) => {
+  const _id = req.params.id;
+  console.log("ID", _id);
+  const user = await questions.findOne({ _id: _id });
+  if (user) {
+    questions.deleteOne({ _id: _id }, function (err, data) {
+      if (err) {
+        res.send(err);
+      } else {
+        res.status(201).send({
+          status: "Success",
+          message: `${data.deletedCount} document deleted`,
+        });
+      }
+    });
+  } else {
+    res.status(404).send({
+      status: "failed",
+      message: `user doesn't exist with this mailId`,
+    });
+  }
 };
 
 export const createCollege = async (req, res) => {
@@ -554,9 +584,9 @@ export const sendresult = async (req, res) => {
     dd: date.getDate(),
     yy: date.getFullYear().toString().slice(-2),
   };
- 
+
   const { candidateId, questionAnswer } = req.body;
-  const {questionId,ans}=questionAnswer
+  const { questionId, ans } = questionAnswer;
   if (candidateId && testDate && questionAnswer) {
     try {
       const docu = new result({
@@ -569,7 +599,7 @@ export const sendresult = async (req, res) => {
         status: "success",
         message: "Submit test successully",
       });
-    } catch(err){
+    } catch (err) {
       res.send({ status: "failed", message: "Unable to Register" });
     }
   } else {
@@ -577,38 +607,37 @@ export const sendresult = async (req, res) => {
   }
 };
 
-
-export const getCandidateResult = async(req, res) => {
-  const _id = req.params.id
+export const getCandidateResult = async (req, res) => {
+  const _id = req.params.id;
   // console.log(req.query._id, "QUERY");
   console.log(_id);
-  const data= await result.find({candidateId:_id})
+  const data = await result.find({ candidateId: _id });
   console.log(data);
-  if(data){
-    res.status(201).send(data)
+  if (data) {
+    res.status(201).send(data);
   }
 };
 
-export const getAllCandidateResult = async(req, res) => {
-  const data= await result.find()
+export const getAllCandidateResult = async (req, res) => {
+  const data = await result.find();
   console.log(data);
-  if(data){
-    res.status(201).send(data)
+  if (data) {
+    res.status(201).send(data);
   }
 };
-export const updateResult = async(req, res) => {
-  const { candidateId, questionAnswer } =req.body
+export const updateResult = async (req, res) => {
+  const { candidateId, questionAnswer } = req.body;
   // console.log(candidateId, questionAnswer);
   // console.log(candidateId,"candidateId");
   const user = await result.find({ candidateId: candidateId });
   // console.log(user, "userrrrrrrrrrrrrrrrrrrr");
   if (user) {
-    console.log(user[0].questionAnswer,"---------------");
+    console.log(user[0].questionAnswer, "---------------");
     console.log(questionAnswer);
     // user[0].questionAnswer
-   const newData= questionAnswer
-  //  console.log("newdata",newData);
-    var myquery = { candidateId: candidateId};
+    const newData = questionAnswer;
+    //  console.log("newdata",newData);
+    var myquery = { candidateId: candidateId };
     var newvalues = {
       $set: {
         questionAnswer: newData,
@@ -647,26 +676,26 @@ export const randomQuestion = (req, res) => {
         }
         return array;
       }
-      
+
       function RecommendedPosts({ posts }) {
-        const shuffledPosts = shuffleArray(data);}
+        const shuffledPosts = shuffleArray(data);
+      }
       res.send(shuffledPosts);
       // console.log(data);
     }
   });
 };
 
-export const getSingleQuestion= async(req, res) => {
+export const getSingleQuestion = async (req, res) => {
   console.log("hello");
-  const id = req.params.id
-  
+  const id = req.params.id;
+
   console.log(id);
-  const data= await questions.findById(id)
-  console.log("data",data);
-  if(data){
-    res.status(201).send(data)
-  }
-  else{
-    res.status(201).send("candidate doesn't exist with this Id")
+  const data = await questions.findById(id);
+  console.log("data", data);
+  if (data) {
+    res.status(201).send(data);
+  } else {
+    res.status(201).send("candidate doesn't exist with this Id");
   }
 };
